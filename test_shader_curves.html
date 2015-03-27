@@ -1,0 +1,164 @@
+<html>
+    <head><link rel="stylesheet" href="css/main.css">
+    </head>
+    <body>
+
+        <div id="container"></div>
+        <script src="js/three.min.js"></script>
+        <script id="vertexShader" type="x-shader/x-vertex">
+            void main() {
+                gl_Position = vec4( position, 1.0 );
+            }
+        </script>
+        <script id="fragmentShader" type="x-shader/x-fragment">
+            uniform vec2 u_resolution;
+            uniform vec2 u_mouse;
+            uniform float u_time;
+
+            float plot(vec2 st, float pct){
+                return smoothstep( pct-0.02, pct, st.y) -
+                        smoothstep( pct, pct+0.02, st.y );
+            }
+            void main() {
+                vec2 st = gl_FragCoord.xy/u_resolution;
+                float PI = 3.1415926535;
+                // Pow Curves //
+                // float y = pow(abs(st.x), 0.5);
+                // float y = pow(abs(st.x), 1.0);
+                // float y = pow(abs(st.x), 1.5);
+                // float y = pow(abs(st.x), 2.0);
+                // float y = pow(abs(st.x), 2.5);
+                // float y = pow(abs(st.x), 3.0);
+                // float y = pow(abs(st.x), 3.5);
+
+                //Pow Curves Reflected across the x axis //
+                // float y = 1.0 - pow(abs(st.x), 0.5);
+
+                //Pow Curves Reflected across the y axis //
+                // float y = pow(1.0 - abs(st.x), 0.5);
+
+                //Pow Curves Reflected across both axes //
+                // float y = 1.0 - pow(1.0 - abs(st.x), 0.5);
+
+
+                //cosine curves (raised to pow)
+                // float y = pow(cos(PI * st.x / 2.0), 0.5);
+                // float y = pow(cos(PI * st.x / 2.0), 1.0);
+                // float y = pow(cos(PI * st.x / 2.0), 1.5);
+                // float y = pow(cos(PI * st.x / 2.0), 2.0);
+                // float y = pow(cos(PI * st.x / 2.0), 2.5);
+                // float y = pow(cos(PI * st.x / 2.0), 3.0);
+                // float y = pow(cos(PI * st.x / 2.0), 3.5);
+
+                //cosine curves reflected across the x axis //
+                // float y = 1.0 - pow(cos( PI * st.x / 2.0 ), 0.5);
+
+                //cosine curves reflected across the y axis(actually sine curve)//
+                // float y = pow( abs( sin(PI * st.x  / 2.0) ), 2.5 );
+
+
+                //sine curves (raised to pow)
+                // float y = pow( abs( sin(PI * st.x  / 2.0) ), 0.5 );
+                // float y = pow( abs( sin(PI * st.x  / 2.0) ), 1.0 );
+                // float y = pow( abs( sin(PI * st.x  / 2.0) ), 1.5 );
+                // float y = pow( abs( sin(PI * st.x  / 2.0) ), 2.0 );
+                // float y = pow( abs( sin(PI * st.x  / 2.0) ), 2.5 );
+                // float y = pow( abs( sin(PI * st.x  / 2.0) ), 3.0 );
+                float y = pow( abs( sin(PI * st.x  / 2.0) ), 3.5 );
+
+                //sine curves reflected across the x axis //
+                // float y = 1.0 - pow( abs( sin( PI * st.x /2.0 ) ), 0.5 );
+
+                //sine curves reflected across the y axis (actually cosine)//
+                // float y = pow(cos(PI * st.x /2.0), 0.5);
+
+                //cosin waves (only negative values, raised to pow)
+                // float y = pow( min( cos( PI * st.x /2.0 ), 1.0 - abs(st.x) ), 0.5 );
+                // float y = pow( min( cos( PI * st.x /2.0 ), 1.0 - abs(st.x) ), 1.0 );
+                // float y = pow( min( cos( PI * st.x /2.0 ), 1.0 - abs(st.x) ), 1.5 );
+                // float y = pow( min( cos( PI * st.x /2.0 ), 1.0 - abs(st.x) ), 2.0 );
+                // float y = pow( min( cos( PI * st.x /2.0 ), 1.0 - abs(st.x) ), 2.5 );
+                // float y = pow( min( cos( PI * st.x /2.0 ), 1.0 - abs(st.x) ), 3.0 );
+                // float y = pow( min( cos( PI * st.x /2.0 ), 1.0 - abs(st.x) ), 3.5 );
+
+                //Pow curves (only positive values)
+                // float y = pow( max( 0.0, abs(st.x) * 2.0 - 1.0 ), 0.5 );
+                // float y = pow( max( 0.0, abs(st.x) * 2.0 - 1.0 ), 1.0 );
+                // float y = pow( max( 0.0, abs(st.x) * 2.0 - 1.0 ), 1.5 );
+                // float y = pow( max( 0.0, abs(st.x) * 2.0 - 1.0 ), 2.0 );
+                // float y = pow( max( 0.0, abs(st.x) * 2.0 - 1.0 ), 2.5 );
+                // float y = pow( max( 0.0, abs(st.x) * 2.0 - 1.0 ), 3.0 );
+                // float y = pow( max( 0.0, abs(st.x) * 2.0 - 1.0 ), 3.5 );
+
+
+
+
+                vec3 color = vec3(y);
+
+                float pct = plot(st, y);
+                color = (1.0-pct)*color+pct*vec3(0.0,1.0,0.0);
+
+                gl_FragColor = vec4(color, 1.0);
+            }
+        </script>
+        <script>
+            // if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
+
+            var container;
+            var camera, scene, renderer;
+            var uniforms;
+
+            init();
+            animate();
+
+            function init() {
+                container = document.getElementById( 'container' );
+
+                camera = new THREE.Camera();
+                camera.position.z = 1;
+
+                scene = new THREE.Scene();
+
+                var geometry = new THREE.PlaneBufferGeometry( 2, 2 );
+
+                uniforms = {
+                    u_time: { type: "f", value: 1.0 },
+                    u_resolution: { type: "v2", value: new THREE.Vector2() }
+                };
+
+                var material = new THREE.ShaderMaterial( {
+                    uniforms: uniforms,
+                    vertexShader: document.getElementById( 'vertexShader' ).textContent,
+                    fragmentShader: document.getElementById( 'fragmentShader' ).textContent
+                } );
+
+                var mesh = new THREE.Mesh( geometry, material );
+                scene.add( mesh );
+
+                renderer = new THREE.WebGLRenderer();
+                renderer.setPixelRatio( window.devicePixelRatio );
+
+                container.appendChild( renderer.domElement );
+
+                onWindowResize();
+                window.addEventListener( 'resize', onWindowResize, false );
+            }
+
+            function onWindowResize( event ) {
+                renderer.setSize( window.innerWidth, window.innerHeight );
+                uniforms.u_resolution.value.x = renderer.domElement.width;
+                uniforms.u_resolution.value.y = renderer.domElement.height;
+            }
+
+            function animate() {
+                requestAnimationFrame( animate );
+                render();
+            }
+
+            function render() {
+                uniforms.u_time.value += 0.05;
+                renderer.render( scene, camera );
+            }
+        </script>
+    </body>
+</html>

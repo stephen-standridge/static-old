@@ -1,0 +1,53 @@
+Static::First Pass
+  Composition
+    -Boring; it could be pushed further
+    -All the skulls are similarly sized; none of them really draw attention
+    -Too many Skulls too close together
+    -Wall of static needs depth
+    -Wall of static should be pool of static in some places
+    -No gaps between skulls that shows other static
+    -Narrower composition?
+    +tiered skulls are great
+    -skulls could be more tiered
+  Models
+    Skulls
+      +Hard to tell that all the skulls are the same
+      -Differentiate some with cracks and deformities
+      -smooth out edges on some
+    Tears
+      -needs to be created
+    EyeBlocks
+      -need to be created
+  Shaders
+    -Static could use other passes
+      -Depth pass
+      -Motion pass
+      -jitter pass
+    -Static initial pass could have more space between the static kernals
+    -Skulls need shading
+      -Crawling Edge detection shading
+      -Jitter shading?
+      -Melt shading?
+
+
+Static::Next Steps
+  models
+    -create tears
+    -create blocks
+  composition
+    -differentiate skull models to give more visual variance
+    -remove skull models
+    -implement new fixed resolution
+  shaders
+    static
+      -space out initial pass
+      -add random displacement pass
+      -add depth pass
+      -add normals pass
+      -add motion pass
+    skulls
+      -blurred edge detection
+      -random displacement pass
+      -melt pass
+
+
