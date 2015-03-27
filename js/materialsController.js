@@ -3,7 +3,7 @@ var MaterialsController = function(){
   this.textures = [];
   this.uniforms = {
     u_time: { type: "f", value: 1.0 },
-    u_resolution: { type: "v2", value: new THREE.Vector2() }
+    u_resolution: { type: "v2", value: new THREE.Vector2(430, 800) }
   }
 }
 MaterialsController.prototype.cycleMaterials = function(){

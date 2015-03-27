@@ -50,18 +50,7 @@
             scene.add( object );
         }, onProgress, onError );
 
-      var uniforms =   uniforms = {
-        u_time: { type: "f", value: 1.0 },
-        u_resolution: { type: "v2", value: new THREE.Vector2() }
-      }
-      var geometry = new THREE.PlaneBufferGeometry( 2, 2 );
-      var material = new THREE.ShaderMaterial( {
-          uniforms: uniforms,
-          vertexShader: document.getElementById( 'static-vert' ).textContent,
-          fragmentShader: document.getElementById( 'static-frag' ).textContent
-      } );
-       var mesh = new THREE.Mesh( geometry, material );
-                // scene.add( mesh );
+
 
         var onProgress = function ( xhr ) {
             if ( xhr.lengthComputable ) {
