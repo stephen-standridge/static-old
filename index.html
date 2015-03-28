@@ -35,29 +35,57 @@
       float rand(vec2 co){
         return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
       }
+      vec3 randomDistributedColor(float s1, float s2){
+          float randSeed1;
+          float randSeed2;        
+          randSeed1 = rand(u_time * vec2(s1, s2) + u_time);
+          randSeed2 = rand(u_time / vec2(s2, s1) + u_time);
+          return vec3(rand(vec2(randSeed1, randSeed2)));        
+      }
+      float displace( float grain, float resolution, float power, float rand){
+        float loop = mod( u_time, ( rand ) );
+        return pow( sin( loop + grain / resolution ), power );
+      }
+      float upToDownDiscolor(float offset, float power, float pos, float rand){
+        float loop = mod( u_time, ( 5.0 * rand ) );        
+        return pow( sin( u_time + pos + offset ), power);
+      }
       void main() {
           vec2 st = gl_FragCoord.xy / u_resolution.xy;
+          st.x = st.x + 10.0;
           float horizontalTest;
           float verticalTest;
           float grainSize = 5.0;
-          float randSeed1;
-          float randSeed2;
-          float randValue;
+          vec2 tracking = vec2(21.3, 3.7);
+          vec2 offset = vec2(20.0, 0.0);
+          vec3 randomColor;
+          vec3 finalColor;
+          vec3 trackColor;
+          float verticalDisplacement;
+          float horizontalDisplacement;
+          float verticalTracking;
+          float randSeed1 = rand(u_time * vec2(st.x, st.y) + u_time);
+          float randSeed2 = rand(u_time *  vec2(st.y, st.x) + u_time);
 
-          horizontalTest = ceil( st.x / ( grainSize / u_resolution.x) );
-          verticalTest = ceil( st.y / ( grainSize / u_resolution.y ) );
-          randSeed1 = rand(u_time * vec2(horizontalTest, verticalTest));
-          randSeed2 = rand(u_time / vec2(verticalTest, horizontalTest));
+          horizontalDisplacement = ceil( st.x / displace( grainSize, u_resolution.x, tracking.x, randSeed2 ) );                
+          verticalDisplacement = ceil( st.y / displace( grainSize, u_resolution.y, tracking.y, randSeed1 ) );   
 
+          horizontalTest = ceil( st.x / (grainSize/ u_resolution.x) );   
+          verticalTest = ceil( st.y / (grainSize/ u_resolution.y) );
 
-          randValue = rand(vec2(randSeed1, randSeed2));
+          horizontalTest = horizontalTest * horizontalDisplacement;
+          verticalTest = verticalTest * verticalDisplacement;
 
+          randomColor = randomDistributedColor(horizontalTest, verticalTest);
+          verticalTracking = upToDownDiscolor(offset.y, tracking.x, st.y, randSeed1 );
+          trackColor = vec3( max ( min( randomColor / vec3( verticalTracking), 0.8 ), 0.2 ) );
+          finalColor = randomColor;
+          // finalColor = vec3(randomColor * verticalTracking, randomColor * verticalTracking, randomColor * verticalTracking);
           /* return 1 if odd, 0 if even */
-          horizontalTest = mod ( horizontalTest, 2.0 );
-          verticalTest = mod ( verticalTest, 2.0 );
+          // horizontalTest = mod ( horizontalTest, 2.0 );
+          // verticalTest = mod ( verticalTest, 2.0 );
 
-          
-          gl_FragColor = vec4(vec3(randValue), 1.0);
+          gl_FragColor = vec4(finalColor, 1.0);
       }
   </script>
 
