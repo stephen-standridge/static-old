@@ -52,18 +52,31 @@
       }
       void main() {
           vec2 st = gl_FragCoord.xy / u_resolution.xy;
-          st.x = st.x + 10.0;
           float horizontalTest;
           float verticalTest;
-          float grainSize = 5.0;
+          float grainSize = 60.0;
+          // float motionLoop = (u_time / 1.0) - floor(u_time/1.0);
+          // float motionLoop2 = cos(u_time / 2.0);          
           vec2 tracking = vec2(21.3, 3.7);
           vec2 offset = vec2(20.0, 0.0);
           vec3 randomColor;
           vec3 finalColor;
           vec3 trackColor;
+          vec3 movementColor1;
+          vec3 movementColor2;
           float verticalDisplacement;
           float horizontalDisplacement;
-          float verticalTracking;
+          float rowOffset = sin(u_time / 5.0);
+          float columnOffset = (u_time / 5.0) - floor(u_time/5.0);
+          float rowOffset2 = sin(u_time / 5.0);
+          float columnOffset2 = (u_time / 3.0) - floor(u_time/3.0);          
+          float row1 = ceil(rowOffset +(st.x  * u_resolution.x) / grainSize);
+          float column1 = ceil(columnOffset +(st.y * u_resolution.y) / grainSize);
+          float row2 = ceil(rowOffset2 +(st.x  * u_resolution.x) / grainSize);
+          float column2 = ceil(columnOffset2 +(st.y * u_resolution.y) / grainSize * 2.0);          
+          
+          float totalRows = u_resolution.x / grainSize;
+          float totalColumns = u_resolution.y / grainSize;
           float randSeed1 = rand(u_time * vec2(st.x, st.y) + u_time);
           float randSeed2 = rand(u_time *  vec2(st.y, st.x) + u_time);
 
@@ -73,13 +86,14 @@
           horizontalTest = ceil( st.x / (grainSize/ u_resolution.x) );   
           verticalTest = ceil( st.y / (grainSize/ u_resolution.y) );
 
-          horizontalTest = horizontalTest * horizontalDisplacement;
-          verticalTest = verticalTest * verticalDisplacement;
+          horizontalTest = horizontalTest * (horizontalDisplacement * 0.1);
+          verticalTest = verticalTest * (verticalDisplacement * 0.1);
 
           randomColor = randomDistributedColor(horizontalTest, verticalTest);
-          verticalTracking = upToDownDiscolor(offset.y, tracking.x, st.y, randSeed1 );
-          trackColor = vec3( max ( min( randomColor / vec3( verticalTracking), 0.8 ), 0.2 ) );
-          finalColor = randomColor;
+          // trackColor = vec3( max ( min( randomColor / vec3( verticalTracking), 0.8 ), 0.2 ) );
+          movementColor1 = vec3( ( (column1 / totalColumns) * (1.0 - 0.6)) + 0.6 );
+          movementColor2 = vec3( ( (column2 / totalColumns) * (1.0 - 0.5)) + 0.5 );
+          finalColor = movementColor1 * movementColor2 - (randomColor * 0.4 );
           // finalColor = vec3(randomColor * verticalTracking, randomColor * verticalTracking, randomColor * verticalTracking);
           /* return 1 if odd, 0 if even */
           // horizontalTest = mod ( horizontalTest, 2.0 );

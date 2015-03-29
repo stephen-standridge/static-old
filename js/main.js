@@ -72,7 +72,7 @@
     function animate() {
         requestAnimationFrame( animate );
         // cameras.controls.update()
-        materials.updateTime('increase', 0.005)
+        materials.updateTime('increase', 0.05)
         renderer.render( scene, cameras.getCurrent() );
     }
     function onWindowResize( event ) {
