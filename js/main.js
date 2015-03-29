@@ -13,7 +13,7 @@
         materials = new MaterialsController();
         materials.createMaterial({fragmentShader:document.getElementById('static-frag').textContent, vertexShader: document.getElementById('static-vert').textContent}, 'static')
         cameras.createCamera('PerspectiveCamera', [30,  430 /800 , 1, 150],
-                            {x: .8, y: 3, z: 8}, {x:.8, y:1.1, z: -3})
+                            {x: .8, y: 1.9, z: 8.0}, {x: .7, y:1.1, z: -9.0})
         lights.createLight('HemisphereLight', [0x333333, 0xffffff, 0.5], [100,100,100], 'hemisphere')
 
 
@@ -22,7 +22,7 @@
             // console.log( item, loaded, total );
         };
         var loader = new THREE.OBJLoader( manager );
-            loader.load( 'models/skulls1.obj', function (object) {
+            loader.load( 'models/skulls3.obj', function (object) {
                object.traverse( function ( child ) {
 
                 if ( child instanceof THREE.Mesh ) {
@@ -35,7 +35,7 @@
             } );
             scene.add( object );
         }, onProgress, onError );
-        loader.load( 'models/scene.obj', function (object) {
+        loader.load( 'models/skullscene2.obj', function (object) {
                object.traverse( function ( child ) {
 
                 if ( child instanceof THREE.Mesh ) {
