@@ -35,7 +35,7 @@
                 // float y = 1.0 - pow(abs(st.x), 0.5);
 
                 //Pow Curves Reflected across the y axis //
-                // float y = pow(1.0 - abs(st.x), 0.5);
+                // float y = pow(1.0 - abs(st.x), 2.5);
 
                 //Pow Curves Reflected across both axes //
                 // float y = 1.0 - pow(1.0 - abs(st.x), 0.5);
@@ -64,10 +64,10 @@
                 // float y = pow( abs( sin(PI * st.x  / 2.0) ), 2.0 );
                 // float y = pow( abs( sin(PI * st.x  / 2.0) ), 2.5 );
                 // float y = pow( abs( sin(PI * st.x  / 2.0) ), 3.0 );
-                float y = pow( abs( sin(PI * st.x  / 2.0) ), 3.5 );
+                // float y = pow( abs( sin(PI * st.x  / 2.0) ), 3.5 );
 
                 //sine curves reflected across the x axis //
-                // float y = 1.0 - pow( abs( sin( PI * st.x /2.0 ) ), 0.5 );
+                float y = 1.0 - pow( abs( sin( st.x * 2.0) ), 3.5 );
 
                 //sine curves reflected across the y axis (actually cosine)//
                 // float y = pow(cos(PI * st.x /2.0), 0.5);

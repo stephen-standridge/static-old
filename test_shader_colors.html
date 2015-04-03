@@ -1,0 +1,133 @@
+<body>
+    <div id="container"></div>
+    <script src="js/three.min.js"></script>
+    <script id="vertexShader" type="x-shader/x-vertex">
+        void main() {
+            gl_Position = vec4( position, 1.0 );
+        }
+    </script>
+    <script id="fragmentShader" type="x-shader/x-fragment">
+        uniform vec2 u_resolution;
+        uniform float u_time;
+
+        float ploty(vec2 st, float pct){
+            return smoothstep( pct-0.01, pct, st.y) -
+                    smoothstep( pct, pct+0.01, st.y);
+        }
+
+        float plotx(vec2 st, float pct){
+            return smoothstep( pct-0.01, pct, st.x) -
+                    smoothstep( pct, pct+0.01, st.x);
+        }        
+
+        void main() {
+            vec2 st = gl_FragCoord.xy / u_resolution;
+            vec3 color = vec3(0.0);
+            vec3 colorx = vec3(0.0);           
+            vec3 colory = vec3(0.0);             
+            vec3 color1 = vec3(0.7, 0.4 , 0.2);
+            vec3 color2 = vec3(0.3, 0.2, 0.7);
+            float PI = 3.1415926535;
+            /* mix function temporal transition*/ 
+            // float percent = abs(sin(u_time));
+            // color = mix(color1, color2, percent);
+
+            /* mix function spatial transition*/ 
+            // vec3 percent = vec3(st.x);
+            // percent.r = pow(abs(sin(u_time +PI * ( percent.r) ) ), 2.0);
+            // color = mix(color1, color2, percent);            
+
+            // color = mix(color, vec3(1.0, 0.0, 0.0), plot(st, percent.r));
+            // color = mix(color, vec3(0.0, 1.0, 0.0), plot(st, percent.g));
+            // color = mix(color, vec3(0.0, 0.0, 1.0), plot(st, percent.b));
+            vec3 finalPercent = vec3(0.0);
+            vec3 percenty = vec3(0.0);
+            percenty.r = pow(sin(1.5 - (st.y * 2.7)), 2.0);
+            percenty.b = 1.0 - pow( cos( 0.6 - st.y ), 2.5 );
+            percenty.g = pow(0.5 - (st.y) + 0.3, 1.7); 
+
+            vec3 percentx = vec3(0.0);
+            percentx.r = 0.2 + pow(sin(1.3 +(st.x * 2.7)), 1.5);
+            percentx.b = (1.0 - st.x) * (1.0 - 0.4) + 0.4;
+            percentx.g = pow(sin(2.0 - abs(st.x * 2.8)), 2.3);
+
+
+            
+            finalPercent.r = pow((percenty.r + percentx.r) - percenty.b, 2.0 ) ;
+            finalPercent.b = ((percenty.b + percentx.b) + percentx.r ) / 2.0;
+            finalPercent.g = (percenty.g + percentx.g + percenty.b) - percentx.r;
+
+            color = mix(color1, color2, finalPercent);    
+
+            // color = mix(color, vec3(1.0, 0.0, 0.0), plotx(st, percenty.r));
+            // color = mix(color, vec3(0.0, 1.0, 0.0), plotx(st, percenty.g));
+            // color = mix(color, vec3(0.0, 0.0, 1.0), plotx(st, percenty.b));  
+            // color = mix(color, vec3(1.0, 0.0, 0.0), ploty(st, percentx.r));
+            // color = mix(color, vec3(0.0, 1.0, 0.0), ploty(st, percentx.g));
+            // color = mix(color, vec3(0.0, 0.0, 1.0), ploty(st, percentx.b));  
+
+            // color = mix(colorx, colory, dot(percentx, percenty));
+
+            gl_FragColor=vec4(color,1.0);
+        }
+    </script>
+    <script>
+        // if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
+
+        var container;
+        var camera, scene, renderer;
+        var uniforms;
+
+        init();
+        animate();
+
+        function init() {
+            container = document.getElementById( 'container' );
+
+            camera = new THREE.Camera();
+            camera.position.z = 1;
+
+            scene = new THREE.Scene();
+
+            var geometry = new THREE.PlaneBufferGeometry( 2, 2 );
+
+            uniforms = {
+                u_time: { type: "f", value: 1.0 },
+                u_resolution: { type: "v2", value: new THREE.Vector2() }
+            };
+
+            var material = new THREE.ShaderMaterial( {
+                uniforms: uniforms,
+                vertexShader: document.getElementById( 'vertexShader' ).textContent,
+                fragmentShader: document.getElementById( 'fragmentShader' ).textContent
+            } );
+
+            var mesh = new THREE.Mesh( geometry, material );
+            scene.add( mesh );
+
+            renderer = new THREE.WebGLRenderer();
+            renderer.setPixelRatio( window.devicePixelRatio );
+
+            container.appendChild( renderer.domElement );
+
+            onWindowResize();
+            window.addEventListener( 'resize', onWindowResize, false );
+        }
+
+        function onWindowResize( event ) {
+            renderer.setSize( window.innerWidth, window.innerHeight );
+            uniforms.u_resolution.value.x = renderer.domElement.width;
+            uniforms.u_resolution.value.y = renderer.domElement.height;
+        }
+
+        function animate() {
+            requestAnimationFrame( animate );
+            render();
+        }
+
+        function render() {
+            uniforms.u_time.value += 0.005;
+            renderer.render( scene, camera );
+        }
+    </script>
+</body>

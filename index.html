@@ -12,6 +12,8 @@
   <script src="js/camerasController.js"></script>
   <script src="js/lightsController.js"></script>
   <script src="js/materialsController.js"></script>
+  <script src="js/modelsController.js"></script>
+
   <script id="static-vert" type="x-shader/x-fragment">
     uniform mat4 model_view_projection_matrix;
     void main() {
@@ -86,8 +88,8 @@
           horizontalTest = ceil( st.x / (grainSize/ u_resolution.x) );   
           verticalTest = ceil( st.y / (grainSize/ u_resolution.y) );
 
-          horizontalTest = horizontalTest * (horizontalDisplacement * 0.1);
-          verticalTest = verticalTest * (verticalDisplacement * 0.1);
+          horizontalTest = mix(horizontalDisplacement,horizontalTest, 0.1);
+          verticalTest = mix(verticalDisplacement, verticalTest, 0.1);
 
           randomColor = randomDistributedColor(horizontalTest, verticalTest);
           // trackColor = vec3( max ( min( randomColor / vec3( verticalTracking), 0.8 ), 0.2 ) );
@@ -102,6 +104,31 @@
           gl_FragColor = vec4(finalColor, 1.0);
       }
   </script>
+    <script id="line-vert" type="x-shader/x-vertex">
+      attribute vec3 center;
+      varying vec3 vCenter;
+
+      void main() {
+          vCenter = center;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }  
+    </script>
+    <script id="line-frag" type="x-shader/x-fragment">
+      #extension GL_OES_standard_derivatives: enable
+
+      varying vec3 vCenter;
+
+      float edgeFactorTri() {
+          vec3 d = fwidth(vCenter.xyz);
+          vec3 a3 = smoothstep(vec3(0.0), d * 1.5, vCenter.xyz);
+          return min(min(a3.x, a3.y), a3.z);
+      }
+
+      void main() {
+          gl_FragColor.rgb = mix(vec3(1.0), vec3(0.2), edgeFactorTri());
+          gl_FragColor.a = 1.0;
+      }
+    </script>  
 
   <script src="js/main.js"></script>
 

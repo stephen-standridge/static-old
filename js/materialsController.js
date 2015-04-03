@@ -45,6 +45,9 @@ MaterialsController.prototype.createMaterial = function(shaders, name, textureUR
   }
   materialBase = {
     uniforms: this.uniforms,
+    attributes: {
+        'center': { type: 'v3', value: null,  boundTo: 'faceVertices' }
+    },
     fragmentShader: shaders.fragmentShader,
     vertexShader: shaders.vertexShader
   }
